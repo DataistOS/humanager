@@ -1,0 +1,1 @@
+# HuMaNager: Next-gen file explorer.

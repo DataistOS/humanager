@@ -1,0 +1,50 @@
+# General Section (Metadata)
+name: humanager
+homepage: https://humanager.dataist.ir/
+description: "HuMaNager: An anatomical intelligent file-management system (Second Brain)"
+issue_tracker: https://github.com/DataistOS/humanager/issues
+documentation: https://dpic.dataist.ir/heuristic/_source/category/tools/humanager.html
+publish_to: 'none'
+version: 0.1.0+1
+
+# Environment
+environment:
+  sdk: ^3.8.1
+
+# Dependencies
+dependencies:
+  # Flutter SDK
+  flutter:
+    sdk: flutter
+
+  # UI & Icons
+  cupertino_icons: ^1.0.8
+
+  # Networking & API
+  http: ^1.6.0
+
+  # File Management & Picking
+  file_picker: ^11.0.3
+
+# Development Dependencies
+dev_dependencies:
+  # Flutter Testing SDK
+  flutter_test:
+    sdk: flutter
+
+  # Linting & Code Style
+  flutter_lints: ^5.0.0
+
+# Flutter specific configurations
+flutter:
+  uses-material-design: true
+
+  # Assets & Fonts
+  # assets:
+  #   - assets/image/
+  #   - assets/fonts/
+
+  # fonts:
+  #   - family: vazir
+  #     fonts:
+  #       - asset: assets/fonts/vazir.ttf

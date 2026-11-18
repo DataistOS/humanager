@@ -1,0 +1,245 @@
+{
+  "root_name": "5ec0ndbr41n",
+  "branches": [
+    {
+      "system": "digestive_system",
+      "organs": [
+        "Anus",
+        "Liver",
+        "mouth"
+      ],
+      "subsystems": [
+        {
+          "name": "mouth",
+          "subsystems": [
+            {
+              "name": "teeth"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "system": "genital_system",
+      "organs": []
+    },
+    {
+      "system": "nervous_system",
+      "organs": [
+        "Emotions",
+        "Mental disorders",
+        "Personality traits",
+        "Neurophysiology"
+      ],
+      "subsystems": [
+        {
+          "name": "central_nervous_system",
+          "subsystems": [
+            {
+              "name": "brain",
+              "subsystems": [
+                {
+                  "name": "mind",
+                  "categories": [
+                    "emotion/emotion_classification",
+                    "memory/purchases",
+                    "memory/fine_art",
+                    "memory/sports",
+                    "memory/SQ3R",
+                    "memory/timeline",
+                    "memory/socialRESP",
+                    "memory/places",
+                    "memory/my_self",
+                    "memory/backup",
+                    "memory/socialization",
+                    "learning/soft_skills",
+                    "learning/hard_skills"
+                  ],
+                  "subsystems": [
+                    {
+                      "name": "emotion",
+                      "organs": [
+                        "emotion_classification"
+                      ]
+                    },
+                    {
+                      "name": "memory",
+                      "organs": [
+                        "purchases",
+                        "timeline",
+                        "socialRESP",
+                        "my_self",
+                        "backup"
+                      ],
+                      "subsystems": [
+                        {
+                          "name": "fine_art",
+                          "organs": [
+                            "Architecture",
+                            "Dance",
+                            "Drawing Art",
+                            "Literature",
+                            "Performing Art",
+                            "Visual Art"
+                          ]
+                        },
+                        {
+                          "name": "sports",
+                          "organs": [
+                            "individual_sports",
+                            "Board Games",
+                            "Video Games",
+                            "Paper&Pencil Games",
+                            "Logic puzzles",
+                            "Mountaineering",
+                            "Team Sport"
+                          ]
+                        },
+                        {
+                          "name": "SQ3R",
+                          "organs": [
+                            "1001 Abbr",
+                            "1001 April Fools Day",
+                            "1001 Articles",
+                            "1001 ASMR",
+                            "1001 Awards",
+                            "1001 Blogeer",
+                            "1001 Book",
+                            "1001 Brand",
+                            "1001 Bugs",
+                            "1001 Cancel Culture File",
+                            "1001 Cancel Culture People",
+                            "1001 Cats",
+                            "1001 Characters",
+                            "1001 Comics",
+                            "1001 Computer Scientist",
+                            "1001 Democide",
+                            "1001 Digital Artist",
+                            "1001 Director",
+                            "1001 Email",
+                            "1001 Genres of social media",
+                            "1001 Hacker Group",
+                            "1001 Hack Report",
+                            "1001 Handwritten",
+                            "1001 HashTag",
+                            "1001 History",
+                            "1001 HTML",
+                            "1001 Jokes",
+                            "1001 Light Novel",
+                            "1001 Lists of deities",
+                            "1001 Magazine",
+                            "1001 Malware",
+                            "1001 Manga",
+                            "1001 Manhwa",
+                            "1001 Medals",
+                            "1001 Model",
+                            "1001 News",
+                            "1001 Observances",
+                            "1001 Opinion poll",
+                            "1001 People_Person",
+                            "1001 People_Public",
+                            "1001 Post",
+                            "1001 Publishing",
+                            "1001 Science",
+                            "1001 Screenplay",
+                            "1001 Tweet",
+                            "1001 Unusual deaths",
+                            "1001 Viral",
+                            "1001 Voice Actor",
+                            "1001_repository.loc"
+                          ]
+                        },
+                        {
+                          "name": "socialization",
+                          "organs": [
+                            "1001 Characters",
+                            "1001 Director",
+                            "1001 Voice Actor",
+                            "1001 Cancel Culture File",
+                            "1001 Computer Scientist",
+                            "1001 Model",
+                            "1001 Cancel Culture People",
+                            "1001 Democide",
+                            "1001 People_Person",
+                            "1001 Cats",
+                            "1001 Digital Artist",
+                            "1001 People_Public"
+                          ]
+                        },
+                        {
+                          "name": "places",
+                          "organs": [
+                            "1001 BookStore",
+                            "1001 Caves",
+                            "1001 Coffeeshop",
+                            "1001 Country",
+                            "1001 Cycling Tips",
+                            "1001 Galleries",
+                            "1001 Historic",
+                            "1001 Lake",
+                            "1001 Natural Wonders",
+                            "1001 Nature Tour",
+                            "1001 Restaurants",
+                            "1001 Road",
+                            "1001 Streets in",
+                            "1001 Tree",
+                            "1001 Unforgettable",
+                            "1001 Waterfalls"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "name": "learning",
+                      "subsystems": [
+                        {
+                          "name": "soft_skills",
+                          "organs": [
+                            "1001_Critical_Thinking",
+                            "1001_Paradoxes",
+                            "1001_Strategy",
+                            "1001_Tactic",
+                            "Logic puzzles",
+                            "Paper&Pencil Games",
+                            "Video Games"
+                          ]
+                        },
+                        {
+                          "name": "hard_skills",
+                          "organs": [
+                            "Chef",
+                            "Gardening",
+                            "ICT",
+                            "Influencer",
+                            "Laborer",
+                            "Language",
+                            "Magic",
+                            "Makeup",
+                            "Musician",
+                            "Sales",
+                            "Teacher"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "peripheral_nervous_system"
+        },
+        {
+          "name": "sensory_system",
+          "organs": [
+            "Auditory system",
+            "Olfactory system",
+            "visual"
+          ]
+        }
+      ]
+    }
+  ]
+}
