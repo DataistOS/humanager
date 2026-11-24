@@ -12,6 +12,19 @@ import (
 	"humanager/internal/engine"
 )
 
+func resolveAnatomyConfigPath() string {
+	candidates := []string{
+		"configs/anatomy_tree.json",
+		"core/configs/anatomy_tree.json",
+	}
+	for _, p := range candidates {
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	return candidates[0]
+}
+
 func main() {
 	fmt.Println("🧠 HuMaNager Daemon is starting...")
 
@@ -25,15 +38,15 @@ func main() {
 		log.Fatalf("Failed to create storage root: %v", err)
 	}
 
-	jsonConfigPath := "configs/anatomy_tree.json"
+	jsonConfigPath := resolveAnatomyConfigPath()
 	if err := engine.BuildAnatomyTree(storageRoot, jsonConfigPath); err != nil {
-		log.Printf("Warning: Could not build anatomy tree from JSON: %v", err)
+		log.Printf("Warning: Could not build anatomy tree from JSON (%s): %v", jsonConfigPath, err)
 	}
 
 	router := api.SetupRouter(storageRoot)
 	port := ":8081"
 
-	fmt.Printf("🚀 API Server is running on http://localhost%s\n", port)
+	fmt.Printf("🚀 API Server is running on http://localhost%s (root: %s)\n", port, storageRoot)
 	if err := http.ListenAndServe(port, router); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}

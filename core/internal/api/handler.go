@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type DirItem struct {
@@ -16,12 +17,57 @@ type DirItem struct {
 	Path   string `json:"path"`
 }
 
+func resolveDirPath(storageRoot, relPath string) (string, string) {
+	cleanedRel := filepath.ToSlash(filepath.Clean("/" + strings.TrimSpace(relPath)))
+	cleanedRel = strings.TrimPrefix(cleanedRel, "/")
+	if cleanedRel == "." {
+		cleanedRel = ""
+	}
+
+	candidate := filepath.Join(storageRoot, cleanedRel)
+	if _, err := os.Stat(candidate); err == nil {
+		return candidate, cleanedRel
+	}
+
+	if cleanedRel != "" && !strings.HasPrefix(cleanedRel, "biological_system") {
+		bioRel := filepath.ToSlash(filepath.Join("biological_system", cleanedRel))
+		bioCandidate := filepath.Join(storageRoot, bioRel)
+		if _, err := os.Stat(bioCandidate); err == nil {
+			return bioCandidate, bioRel
+		}
+	}
+
+	return candidate, cleanedRel
+}
+
+func HandleGetTree(storageRoot string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
+		systems := make([]string, 0)
+		bioDir := filepath.Join(storageRoot, "biological_system")
+		entries, err := os.ReadDir(bioDir)
+		if err == nil {
+			for _, entry := range entries {
+				if entry.IsDir() {
+					systems = append(systems, entry.Name())
+				}
+			}
+		}
+
+		json.NewEncoder(w).Encode(map[string]any{
+			"root":    filepath.Base(filepath.Clean(storageRoot)),
+			"systems": systems,
+		})
+	}
+}
+
 func HandleListDirectory(storageRoot string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		relPath := r.URL.Query().Get("path")
-		targetPath := filepath.Join(storageRoot, relPath)
+		targetPath, effectiveRel := resolveDirPath(storageRoot, relPath)
 
 		entries, err := os.ReadDir(targetPath)
 		if err != nil {
@@ -29,17 +75,18 @@ func HandleListDirectory(storageRoot string) http.HandlerFunc {
 			return
 		}
 
-		var items []DirItem
+		items := make([]DirItem, 0, len(entries))
 		for _, entry := range entries {
+			itemRelPath := filepath.ToSlash(filepath.Join(effectiveRel, entry.Name()))
 			items = append(items, DirItem{
 				Name:   entry.Name(),
 				IsDirs: entry.IsDir(),
-				Path:   filepath.Join(relPath, entry.Name()),
+				Path:   itemRelPath,
 			})
 		}
 
 		json.NewEncoder(w).Encode(map[string]any{
-			"current_path": relPath,
+			"current_path": effectiveRel,
 			"items":        items,
 		})
 	}
@@ -95,7 +142,24 @@ func HandleUploadAndClassify(storageRoot string) http.HandlerFunc {
 		}
 		defer file.Close()
 
-		relativeSubPath := classifier.RouteFile(header.Filename)
+		collection := r.FormValue("collection")
+		slug := r.FormValue("slug")
+		if slug == "" {
+			slug = r.FormValue("finglish")
+		}
+		recordID := r.FormValue("record_id")
+
+		var relativeSubPath string
+		var finalFileName string
+
+		if routedDir, routedFileName, matched := classifier.RouteCollectionRecord(collection, slug, recordID, header.Filename); matched {
+			relativeSubPath = routedDir
+			finalFileName = routedFileName
+		} else {
+			relativeSubPath = classifier.RouteFile(header.Filename)
+			finalFileName = header.Filename
+		}
+
 		targetDir := filepath.Join(storageRoot, relativeSubPath)
 
 		if err := os.MkdirAll(targetDir, 0755); err != nil {
@@ -103,7 +167,7 @@ func HandleUploadAndClassify(storageRoot string) http.HandlerFunc {
 			return
 		}
 
-		dstPath := filepath.Join(targetDir, header.Filename)
+		dstPath := filepath.Join(targetDir, finalFileName)
 		dst, err := os.Create(dstPath)
 		if err != nil {
 			http.Error(w, "Failed to create destination file: "+err.Error(), http.StatusInternalServerError)
@@ -116,12 +180,15 @@ func HandleUploadAndClassify(storageRoot string) http.HandlerFunc {
 			return
 		}
 
+		relativePath := filepath.ToSlash(filepath.Join(relativeSubPath, finalFileName))
+
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]any{
 			"success":       true,
 			"message":       "File uploaded and classified successfully",
-			"assigned_path": relativeSubPath,
-			"file_name":     header.Filename,
+			"assigned_path": filepath.ToSlash(relativeSubPath),
+			"relative_path": relativePath,
+			"file_name":     finalFileName,
 		})
 	}
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'upupa_bridge_service.dart';
 
 class HuMaNagerCoreService {
   static const String baseUrl = 'http://localhost:8081/api';
@@ -98,5 +99,36 @@ class HuMaNagerCoreService {
       }
     }
     return false;
+  }
+
+  static Future uploadViaUpupaSync({
+    required String filePath,
+    required String fileName,
+    required String collection,
+    String? collectionId,
+    String? recordId,
+    String? slug,
+    String? targetField,
+    String? targetFilename,
+    UpupaBridgeService? bridgeService,
+  }) async {
+    final service = bridgeService ?? UpupaBridgeService();
+    final ownsService = bridgeService == null;
+    try {
+      return await service.syncFile(
+        filePath: filePath,
+        fileName: fileName,
+        collection: collection,
+        collectionId: collectionId,
+        recordId: recordId,
+        slug: slug,
+        targetField: targetField,
+        targetFilename: targetFilename,
+      );
+    } finally {
+      if (ownsService) {
+        service.dispose();
+      }
+    }
   }
 }

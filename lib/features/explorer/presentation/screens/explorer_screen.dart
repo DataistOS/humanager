@@ -1,11 +1,13 @@
 // lib/features/explorer/presentation/screens/explorer_screen.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import '../../../../core/services/core_service.dart';
 
 class ExplorerScreen extends StatefulWidget {
   final String currentPath;
+
   const ExplorerScreen({super.key, this.currentPath = ''});
 
   @override
@@ -49,18 +51,18 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
 
         setState(() {
           _isUploading = false;
+          if (success) {
+            _loadDirectory();
+          }
         });
 
         if (success) {
-          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('فایل "$fileName" با موفقیت آپلود و طبقه‌بندی شد!'),
             ),
           );
-          _loadDirectory();
         } else {
-          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('خطا در آپلود یا طبقه‌بندی فایل')),
           );
@@ -75,6 +77,32 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
         print('Pick file error: $e');
       }
     }
+  }
+
+  void _showFileInfoDialog(BuildContext context, String name, String path) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(name),
+        content: SelectableText('مسیر در مخزن:\n$path'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(text: path));
+              Navigator.pop(dialogContext);
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(const SnackBar(content: Text('مسیر فایل کپی شد')));
+            },
+            child: const Text('کپی مسیر'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('بستن'),
+          ),
+        ],
+      ),
+    );
   }
 
   void _showCreateFolderDialog(BuildContext context) {
@@ -171,9 +199,16 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                           color: isDir ? Colors.amber : Colors.blueAccent,
                         ),
                         title: Text(name),
+                        subtitle: !isDir
+                            ? Text(
+                                path,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            : null,
                         trailing: isDir
                             ? const Icon(Icons.arrow_forward_ios, size: 16)
-                            : null,
+                            : const Icon(Icons.info_outline, size: 18),
                         onTap: () {
                           if (isDir) {
                             Navigator.push(
@@ -183,7 +218,9 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                                     ExplorerScreen(currentPath: path),
                               ),
                             );
-                          } else {}
+                          } else {
+                            _showFileInfoDialog(context, name, path);
+                          }
                         },
                       ),
                     );

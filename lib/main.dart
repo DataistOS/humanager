@@ -1,6 +1,8 @@
-// main.dart
+// lib/main.dart
 import 'package:flutter/material.dart';
 import 'core/services/core_service.dart';
+import 'features/explorer/presentation/screens/explorer_screen.dart'
+    as feature_explorer;
 
 void main() {
   runApp(const HuMaNagerApp());
@@ -14,20 +16,20 @@ class HuMaNagerApp extends StatelessWidget {
     return MaterialApp(
       title: 'HuMaNager',
       theme: ThemeData.dark(),
-      home: const ExplorerScreen(),
+      home: const AnatomyRootScreen(),
     );
   }
 }
 
-class ExplorerScreen extends StatefulWidget {
-  const ExplorerScreen({super.key});
+class AnatomyRootScreen extends StatefulWidget {
+  const AnatomyRootScreen({super.key});
 
   @override
-  State<ExplorerScreen> createState() => _ExplorerScreenState();
+  State<AnatomyRootScreen> createState() => _AnatomyRootScreenState();
 }
 
-class _ExplorerScreenState extends State<ExplorerScreen> {
-  late Future<dynamic> _treeFuture;
+class _AnatomyRootScreenState extends State<AnatomyRootScreen> {
+  late Future _treeFuture;
 
   @override
   void initState() {
@@ -35,11 +37,36 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
     _treeFuture = HuMaNagerCoreService.fetchAnatomyTree();
   }
 
+  String _resolveInitialPath(String itemName) {
+    if (itemName == 'biological_system' ||
+        itemName.startsWith('biological_system/')) {
+      return itemName;
+    }
+    return 'biological_system/$itemName';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HuMaNager - Anatomical Explorer')),
-      body: FutureBuilder<dynamic>(
+      appBar: AppBar(
+        title: const Text('HuMaNager - Anatomical Explorer'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.folder_open),
+            tooltip: 'باز کردن ریشه مخزن (~/5ec0ndbr41n)',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const feature_explorer.ExplorerScreen(currentPath: ''),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      body: FutureBuilder(
         future: _treeFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -51,15 +78,18 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
             );
           }
 
-          final data = snapshot.data as Map<String, dynamic>;
-          final rootName = data['root'] ?? 'Unknown';
-          final systems = List<String>.from(data['systems'] ?? []);
+          final data = snapshot.data as Map;
+          final rootName = (data['root'] ?? '~/5ec0ndbr41n').toString();
+          final rawSystems = data['systems'];
+          final List<String> systems = rawSystems is List
+              ? rawSystems.map((e) => e.toString()).toList()
+              : <String>[];
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
             children: [
               Text(
-                'Root Storage: $rootName',
+                'Root Storage: $rootName  (~/5ec0ndbr41n)',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -71,16 +101,30 @@ class _ExplorerScreenState extends State<ExplorerScreen> {
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
               const SizedBox(height: 8),
-              ...systems.map(
-                (system) => Card(
+              ...systems.map((system) {
+                final targetPath = _resolveInitialPath(system);
+                return Card(
                   child: ListTile(
                     leading: const Icon(Icons.folder, color: Colors.blueAccent),
                     title: Text(system),
+                    subtitle: Text(
+                      targetPath,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => feature_explorer.ExplorerScreen(
+                            currentPath: targetPath,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                ),
-              ),
+                );
+              }),
             ],
           );
         },

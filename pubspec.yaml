@@ -5,7 +5,7 @@ description: "HuMaNager: An anatomical intelligent file-management system (Secon
 issue_tracker: https://github.com/DataistOS/humanager/issues
 documentation: https://dpic.dataist.ir/heuristic/_source/category/tools/humanager.html
 publish_to: 'none'
-version: 0.1.0+1
+version: 0.2.0+1
 
 # Environment
 environment:
@@ -16,6 +16,10 @@ dependencies:
   # Flutter SDK
   flutter:
     sdk: flutter
+
+  # Networking & Backend Client (UpUpa API & Direct HTTP Requests)
+  upupa_dart:
+    path: ../upupa/upupa_dart
 
   # UI & Icons
   cupertino_icons: ^1.0.8
